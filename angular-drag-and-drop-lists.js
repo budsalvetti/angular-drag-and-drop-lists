@@ -309,6 +309,9 @@
        */
       element.on('dragover', function(event) {
         event = event.originalEvent || event;
+        
+        //BUG FIX for flickering and cannot drop issues
+        var pixelOffset = 10;
 
         // Check whether the drop is allowed and determine mime type.
         var mimeType = getMimeType(event.dataTransfer.types);
@@ -332,9 +335,9 @@
             // we position the placeholder before the list item, otherwise after it.
             var rect = listItemNode.getBoundingClientRect();
             if (listSettings.horizontal) {
-              var isFirstHalf = event.clientX < rect.left + rect.width / 2;
+              var isFirstHalf = event.clientX < rect.left + (rect.width / 2) + pixelOffset;
             } else {
-              var isFirstHalf = event.clientY < rect.top + rect.height / 2;
+              var isFirstHalf = event.clientY < rect.top + (rect.height / 2) + pixelOffset;
             }
             listNode.insertBefore(placeholderNode,
                 isFirstHalf ? listItemNode : listItemNode.nextSibling);
@@ -367,6 +370,7 @@
       });
 
       /**
+      
        * When the element is dropped, we use the position of the placeholder element as the
        * position where we insert the transferred data. This assumes that the list has exactly
        * one child element per array element.
